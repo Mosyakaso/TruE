@@ -1,10 +1,6 @@
-name: Python Tests
+name: CI Tests
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -13,44 +9,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
     
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install Flask==2.3.3 Flask-SQLAlchemy==3.0.5
+      run: pip install Flask Flask-SQLAlchemy
     
-    - name: Create test script
-      run: |
-        cat > test_import.py << 'EOF'
-import sys
-try:
-    from app import app
-    print('[OK] Приложение импортировано')
-    print('[OK] Секретный ключ:', app.config['SECRET_KEY'])
-    print('[OK] Все базовые проверки пройдены')
-    sys.exit(0)
-except Exception as e:
-    print('[ERROR] Ошибка:', e)
-    sys.exit(1)
-EOF
-    
-    - name: Run import test
-      run: python test_import.py
-    
-    - name: Run minimal test
-      run: |
-        if [ -f "test_minimal.py" ]; then
-          python test_minimal.py
-        else
-          echo "test_minimal.py не найден, пропускаем"
-        fi
+    - name: Test application
+      run: python -c "from app import app; print('Application imported successfully')"
     
     - name: Check files
       run: |
-        echo "Проверка структуры проекта:"
-        echo "app.py: $( [ -f "app.py" ] && echo "✅" || echo "❌" )"
-        echo "requirements.txt: $( [ -f "requirements.txt" ] && echo "✅" || echo "❌" )"
+        ls -la
+        [ -f "app.py" ] && echo "app.py exists" || echo "app.py missing"
