@@ -118,6 +118,7 @@ def add_employee():
 
 @app.route('/init_db')
 def init_db():
+    """Инициализация базы данных"""
     with app.app_context():
         db.create_all()
         flash('База данных инициализирована')
