@@ -36,26 +36,23 @@ jobs:
     - name: Quick functionality test
       run: |
         echo "=== Быстрая проверка ==="
-        python -c "
-import sys
+        python -c "import sys
 sys.path.insert(0, '.')
 try:
     from app import app
     print('[OK] Приложение импортировано')
-    print(f'[OK] Секретный ключ: {app.config[\"SECRET_KEY\"]}')
     print('[OK] Все базовые проверки пройдены')
     exit(0)
 except Exception as e:
-    print(f'[ERROR] Ошибка: {e}')
-    exit(1)
-        "
+    print('[ERROR] Ошибка: ' + str(e))
+    exit(1)"
     
     - name: Check file structure
       run: |
         echo "=== Проверка файлов ==="
         ls -la
         echo "---"
-        [ -f "app.py" ] && echo "✅ app.py найден" || echo "❌ app.py не найден"
-        [ -f "requirements.txt" ] && echo "✅ requirements.txt найден" || echo "❌ requirements.txt не найден"
-        [ -f "test_simple.py" ] && echo "✅ test_simple.py найден" || echo "❌ test_simple.py не найден"
-        [ -f "run_tests.py" ] && echo "✅ run_tests.py найден" || echo "❌ run_tests.py не найден"
+        if [ -f "app.py" ]; then echo "✅ app.py найден"; else echo "❌ app.py не найден"; exit 1; fi
+        if [ -f "requirements.txt" ]; then echo "✅ requirements.txt найден"; else echo "❌ requirements.txt не найден"; exit 1; fi
+        if [ -f "test_simple.py" ]; then echo "✅ test_simple.py найден"; else echo "❌ test_simple.py не найден"; fi
+        if [ -f "run_tests.py" ]; then echo "✅ run_tests.py найден"; else echo "❌ run_tests.py не найден"; fi
